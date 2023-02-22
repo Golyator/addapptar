@@ -63,7 +63,7 @@ if (file_exists($env_file)) {
         strtotime($env_vars['REFERENCE_DATE']),
         $env_vars['FLUX_VALID_DAYS']
     );
-    $servername = $env_vars['DB_HOST'];
+    $host = $env_vars['DB_HOST'];
     $username = $env_vars['DB_USERNAME'];
     $password = $env_vars['DB_PASSWORD'];
     $dbname = $env_vars['DB_NAME'];
@@ -75,7 +75,7 @@ if (file_exists($env_file)) {
 $dates = $dateFetcher->fetchDates($env_vars['DATA_SIZE']);
 
 // create a PDO object to connect to the database
-$dbh = new PDO('mysql:host=' . $servername . ';dbname=' . $dbname, $username, $password);
+$dbh = new PDO('mysql:host=' . $host . ';dbname=' . $dbname, $username, $password);
 
 // prepare the query with placeholders
 $stmt = $dbh->prepare("INSERT INTO random_dates (dateString, differenceDays, valid) VALUES (?, ?, ?)");
