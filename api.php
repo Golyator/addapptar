@@ -32,29 +32,36 @@ try {
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $pageSize = isset($_GET['pageSize']) ? $_GET['pageSize'] : 10;
 $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
+$date = isset($_GET['date']) ? $_GET['date'] : '';
 
-// Calculate offset and limit
-$offset = ($page - 1) * $pageSize;
-$limit = $pageSize;
+if ($date) {
+    $sql = "SELECT * FROM random_dates WHERE dateString = :dateString";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue(':dateString', $date, PDO::PARAM_STR);
+} else {
+    // Calculate offset and limit
+    $offset = ($page - 1) * $pageSize;
+    $limit = $pageSize;
 
-// Build SQL query
-$sql = "SELECT * FROM random_dates";
+    // Build SQL query
+    $sql = "SELECT * FROM random_dates";
 
-// Add sorting to the query
-if ($sort) {
-    $sql .= " ORDER BY dateString ";
-    $sql .= (strtolower($sort) == 'desc') ? 'DESC' : 'ASC';
+    // Add sorting to the query
+    if ($sort) {
+        $sql .= " ORDER BY dateString ";
+        $sql .= (strtolower($sort) == 'desc') ? 'DESC' : 'ASC';
+    }
+
+    // Add pagination to the query
+    $sql .= " LIMIT :limit OFFSET :offset";
+
+    // Prepare the SQL statement
+    $stmt = $pdo->prepare($sql);
+
+    // Bind parameters
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 }
-
-// Add pagination to the query
-$sql .= " LIMIT :limit OFFSET :offset";
-
-// Prepare the SQL statement
-$stmt = $pdo->prepare($sql);
-
-// Bind parameters
-$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 
 // Execute the SQL statement
 $stmt->execute();
