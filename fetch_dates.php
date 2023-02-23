@@ -84,4 +84,6 @@ $stmt = $dbh->prepare("INSERT INTO random_dates (dateString, differenceDays, val
 foreach ($dates as $row) {
     $stmt->execute($row);
 }
+
+echo "added " . count($dates) . " elements to database";
 ?>
